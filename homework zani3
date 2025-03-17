@@ -3,7 +3,7 @@ class BankAccount:
      @classmethod
      def create_empty_account(cls, __account_number):
          return cls(__account_number, __balance=0)
-     def __init__(self, account_number, balance):
+@@ -25,4 +24,64 @@def __init__(self, account_number, balance):
  acc = BankAccount.create_empty_account("123456789")  
  acc.deposit(500)  
  acc.withdraw(200)  
