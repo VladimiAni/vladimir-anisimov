@@ -1,0 +1,242 @@
+#1
+import math
+
+class Fraction:
+    def __new__(cls, numerator, denominator):
+        """Проверка деления на 0 при создании объекта."""
+        if denominator == 0:
+            raise ZeroDivisionError("Знаменатель не может быть равен нулю.")
+        return super().__new__(cls)
+
+    def __init__(self, numerator, denominator):
+        """Инициализация объекта дроби."""
+        if not isinstance(numerator, int):
+            raise TypeError("Числитель должен быть целым числом.")
+        if not isinstance(denominator, int):
+            raise TypeError("Знаменатель должен быть целым числом.")
+        self.numerator = numerator
+        self.denominator = denominator
+        self._value = None  # Кэшируем значение, чтобы вычислять только один раз
+
+    def __str__(self):
+        """Красивый вывод дроби (a/b)."""
+        return f"{self.numerator}/{self.denominator}"
+
+    def __repr__(self):
+         return f"Fraction({self.numerator}, {self.denominator})"
+
+    @property
+    def value(self):
+        """Вычисление точного значения дроби с округлением до 3-го знака."""
+        if self._value is None:
+            self._value = round(self.numerator / self.denominator, 3)
+        return self._value
+
+    def __add__(self, other):
+        """Сложение двух дробей."""
+        if isinstance(other, Fraction):
+            new_numerator = self.numerator * other.denominator + other.numerator * self.denominator
+            new_denominator = self.denominator * other.denominator
+            return Fraction(new_numerator, new_denominator)
+        else:
+            raise TypeError("Складывать можно только с объектом Fraction")
+
+    def __sub__(self, other):
+        """Вычитание двух дробей."""
+        if isinstance(other, Fraction):
+            new_numerator = self.numerator * other.denominator - other.numerator * self.denominator
+            new_denominator = self.denominator * other.denominator
+            return Fraction(new_numerator, new_denominator)
+        else:
+            raise TypeError("Вычитать можно только объект Fraction")
+
+    def __mul__(self, other):
+        """Умножение двух дробей."""
+        if isinstance(other, Fraction):
+            new_numerator = self.numerator * other.numerator
+            new_denominator = self.denominator * other.denominator
+            return Fraction(new_numerator, new_denominator)
+        else:
+            raise TypeError("Умножать можно только на объект Fraction")
+
+    def __truediv__(self, other):
+        """Деление двух дробей."""
+        if isinstance(other, Fraction):
+            new_numerator = self.numerator * other.denominator
+            new_denominator = self.denominator * other.numerator
+            if new_denominator == 0:
+                raise ZeroDivisionError("Деление на ноль!")
+            return Fraction(new_numerator, new_denominator)
+        else:
+            raise TypeError("Делить можно только на объект Fraction")
+
+    @staticmethod
+    def gcd(a, b):
+        """Наибольший общий делитель (НОД)."""
+        while(b):
+            a, b = b, a % b
+        return a
+
+    @classmethod
+    def simplify(cls, fraction):
+        """Упрощение дроби."""
+        common_divisor = Fraction.gcd(fraction.numerator, fraction.denominator)
+        return Fraction(fraction.numerator // common_divisor, fraction.denominator // common_divisor)
+
+# Пример работы:
+f1 = Fraction(1, 2)
+f2 = Fraction(3, 4)
+print(f1 + f2)  # 5/4
+print(f1 - f2)  # -1/4
+print(f1 * f2)  # 3/8
+print(f1 / f2)  # 2/3
+print(f1.value) # 0.5
+print(Fraction.simplify(f1+f2)) #5/4
+print(Fraction.simplify(Fraction(4, 6))) #2/3
+
+try:
+    f3 = Fraction(1, 0)
+except ZeroDivisionError as e:
+    print(e) #Знаменатель не может быть равен нулю.
+
+try:
+    f4 = Fraction(1.5, 2)
+except TypeError as e:
+    print(e) #Числитель должен быть целым числом.
+
+
+#2
+from fractions import Fraction
+
+class FractionMatrix:
+    def __init__(self, matrix):
+        """Инициализация матрицы из дробей."""
+        if not all(isinstance(row, list) for row in matrix):
+            raise TypeError("Матрица должна быть списком списков.")
+        if not all(all(isinstance(elem, Fraction) for elem in row) for row in matrix):
+            raise TypeError("Элементы матрицы должны быть объектами Fraction.")
+
+        self.matrix = matrix
+        self.rows = len(matrix)
+        self.cols = len(matrix[0]) if matrix else 0 # Важно для пустых матриц
+        if not all(len(row) == self.cols for row in matrix):
+              raise ValueError("Все строки должны иметь одинаковую длину.")
+
+    def __str__(self):
+        """Красивый вывод матрицы."""
+        return "\n".join([" ".join(str(elem) for elem in row) for row in self.matrix])
+
+    def __add__(self, other):
+        """Сложение матриц."""
+        if not isinstance(other, FractionMatrix):
+            raise TypeError("Можно складывать только с объектом FractionMatrix.")
+        if self.rows != other.rows or self.cols != other.cols:
+            raise ValueError("Матрицы должны иметь одинаковые размеры для сложения.")
+
+        result = []
+        for i in range(self.rows):
+            row = []
+            for j in range(self.cols):
+                row.append(self.matrix[i][j] + other.matrix[i][j])
+            result.append(row)
+        return FractionMatrix(result)
+
+    def __sub__(self, other):
+        """Вычитание матриц."""
+        if not isinstance(other, FractionMatrix):
+            raise TypeError("Можно вычитать только объект FractionMatrix.")
+        if self.rows != other.rows or self.cols != other.cols:
+            raise ValueError("Матрицы должны иметь одинаковые размеры для вычитания.")
+
+        result = []
+        for i in range(self.rows):
+            row = []
+            for j in range(self.cols):
+                row.append(self.matrix[i][j] - other.matrix[i][j])
+            result.append(row)
+        return FractionMatrix(result)
+
+    def __mul__(self, other):
+        """Умножение матриц."""
+        if isinstance(other, FractionMatrix):
+            if self.cols != other.rows:
+                raise ValueError("Количество столбцов первой матрицы должно быть равно количеству строк второй матрицы для умножения.")
+
+            result = [[Fraction(0, 1) for _ in range(other.cols)] for _ in range(self.rows)]  # Инициализация нулями
+            for i in range(self.rows):
+                for j in range(other.cols):
+                    for k in range(self.cols):  # Или other.rows
+                        result[i][j] += self.matrix[i][k] * other.matrix[k][j]
+            return FractionMatrix(result)
+        else:
+            raise TypeError("Умножать можно только на объект FractionMatrix")
+
+    def transpose(self):
+        """Транспонирование матрицы."""
+        result = [[self.matrix[j][i] for j in range(self.rows)] for i in range(self.cols)]
+        return FractionMatrix(result)
+
+    @property
+    def determinant(self):
+        """Вычисление определителя (только для квадратных матриц)."""
+        if self.rows != self.cols:
+            raise ValueError("Определитель можно вычислить только для квадратных матриц.")
+
+        if self.rows == 1:
+            return self.matrix[0][0]
+        if self.rows == 2:
+            return self.matrix[0][0] * self.matrix[1][1] - self.matrix[0][1] * self.matrix[1][0]
+        if self.rows == 3:
+              return (self.matrix[0][0] * (self.matrix[1][1] * self.matrix[2][2] - self.matrix[1][2] * self.matrix[2][1])
+                      - self.matrix[0][1] * (self.matrix[1][0] * self.matrix[2][2] - self.matrix[1][2] * self.matrix[2][0])
+                      + self.matrix[0][2] * (self.matrix[1][0] * self.matrix[2][1] - self.matrix[1][1] * self.matrix[2][0]))
+
+        else:
+            raise NotImplementedError("Определитель для матриц большего размера не реализован.")
+
+    @staticmethod
+    def is_square_matrix(matrix):
+        """Проверка, является ли матрица квадратной."""
+        return len(matrix) == len(matrix[0]) if matrix else False
+
+    @classmethod
+    def identity_matrix(cls, n):
+       """Создание единичной матрицы размера n x n."""
+       identity = [[Fraction(1, 1) if i == j else Fraction(0, 1) for j in range(n)] for i in range(n)]
+       return FractionMatrix(identity)
+
+# Пример работы:
+m1 = FractionMatrix([[Fraction(1, 2), Fraction(1, 3)], [Fraction(2, 5), Fraction(3, 4)]])
+m2 = FractionMatrix([[Fraction(1, 3), Fraction(2, 3)], [Fraction(1, 2), Fraction(2, 5)]])
+
+print("m1:")
+print(m1)
+print("\nm2:")
+print(m2)
+
+print("\nm1 + m2:")
+print(m1 + m2)
+print("\nm1 * m2:")
+print(m1 * m2)
+print("\nm1.determinant:")
+print(m1.determinant)
+print("\nm1 transposed")
+print(m1.transpose())
+print("\nIdentity matrix")
+print(FractionMatrix.identity_matrix(3))
+
+try:
+    m3 = FractionMatrix([[Fraction(1, 2), Fraction(1, 3)], [Fraction(2, 5)]])
+except ValueError as e:
+    print(e) # Все строки должны иметь одинаковую длину.
+
+try:
+    m4 = FractionMatrix([[1, 2], [3, 4]])
+except TypeError as e:
+    print(e) #Элементы матрицы должны быть объектами Fraction.
+
+try:
+    m5 = FractionMatrix([[Fraction(1, 2), Fraction(1, 3)], [Fraction(2, 5), Fraction(3, 4)]])
+    print(m5.determinant)
+except ValueError as e:
+    print(e)
