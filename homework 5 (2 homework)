@@ -1,0 +1,102 @@
+#1
+import math
+
+class Fraction:
+    def __new__(cls, numerator, denominator):
+        if denominator == 0:
+            raise ZeroDivisionError("Знаменатель не может быть равен нулю.")
+        return super().__new__(cls)
+
+    def __init__(self, numerator, denominator):
+        if not isinstance(numerator, int):
+            raise TypeError("Числитель должен быть целым числом.")
+        if not isinstance(denominator, int):
+            raise TypeError("Знаменатель должен быть целым числом.")
+        self.numerator = numerator
+        self.denominator = denominator
+        self._value = None  # Кэшируем значение, чтобы вычислять только один раз
+
+    def __str__(self):
+        return f"{self.numerator}/{self.denominator}"
+
+    def __repr__(self):
+         return f"Fraction({self.numerator}, {self.denominator})"
+
+    @property
+    def value(self):
+        """Вычисление точного значения дроби с округлением до 3-го знака."""
+        if self._value is None:
+            self._value = round(self.numerator / self.denominator, 3)
+        return self._value
+
+    def __add__(self, other):
+        """Сложение двух дробей."""
+        if isinstance(other, Fraction):
+            new_numerator = self.numerator * other.denominator + other.numerator * self.denominator
+            new_denominator = self.denominator * other.denominator
+            return Fraction(new_numerator, new_denominator)
+        else:
+            raise TypeError("Складывать можно только с объектом Fraction")
+
+    def __sub__(self, other):
+        """Вычитание двух дробей."""
+        if isinstance(other, Fraction):
+            new_numerator = self.numerator * other.denominator - other.numerator * self.denominator
+            new_denominator = self.denominator * other.denominator
+            return Fraction(new_numerator, new_denominator)
+        else:
+            raise TypeError("Вычитать можно только объект Fraction")
+
+    def __mul__(self, other):
+        """Умножение двух дробей."""
+        if isinstance(other, Fraction):
+            new_numerator = self.numerator * other.numerator
+            new_denominator = self.denominator * other.denominator
+            return Fraction(new_numerator, new_denominator)
+        else:
+            raise TypeError("Умножать можно только на объект Fraction")
+
+    def __truediv__(self, other):
+        """Деление двух дробей."""
+        if isinstance(other, Fraction):
+            new_numerator = self.numerator * other.denominator
+            new_denominator = self.denominator * other.numerator
+            if new_denominator == 0:
+                raise ZeroDivisionError("Деление на ноль!")
+            return Fraction(new_numerator, new_denominator)
+        else:
+            raise TypeError("Делить можно только на объект Fraction")
+
+    @staticmethod
+    def gcd(a, b):
+        """Наибольший общий делитель (НОД)."""
+        while(b):
+            a, b = b, a % b
+        return a
+
+    @classmethod
+    def simplify(cls, fraction):
+        """Упрощение дроби."""
+        common_divisor = Fraction.gcd(fraction.numerator, fraction.denominator)
+        return Fraction(fraction.numerator // common_divisor, fraction.denominator // common_divisor)
+
+# Пример работы:
+f1 = Fraction(1, 2)
+f2 = Fraction(3, 4)
+print(f1 + f2)  # 5/4
+print(f1 - f2)  # -1/4
+print(f1 * f2)  # 3/8
+print(f1 / f2)  # 2/3
+print(f1.value) # 0.5
+print(Fraction.simplify(f1+f2)) #5/4
+print(Fraction.simplify(Fraction(4, 6))) #2/3
+
+try:
+    f3 = Fraction(1, 0)
+except ZeroDivisionError as e:
+    print(e) #Знаменатель не может быть равен нулю.
+
+try:
+    f4 = Fraction(1.5, 2)
+except TypeError as e:
+    print(e) #Числитель должен быть целым числом.
