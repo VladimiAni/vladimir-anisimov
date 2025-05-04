@@ -1,0 +1,50 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+class Derivative:
+
+    def __init__(self, h=1e-5):
+        self.h = h
+
+    def __get__(self, instance, owner):
+        """Обеспечивает доступ к производной из класса ExponentialFunction."""
+        self.instance = instance
+        return self
+
+    def __call__(self, x):
+        """Вычисляет производную численно в точке x."""
+        if self.instance is None:
+            raise AttributeError("Derivative должен быть вызван через экземпляр ExponentialFunction")
+        return (self.instance(x + self.h) - self.instance(x - self.h)) / (2 * self.h)
+
+class ExponentialFunction:
+
+    def __init__(self, a):
+        self.a = a
+        self.derivative = Derivative()  # Создаем экземпляр дескриптора
+
+    def __call__(self, x):
+        return self.a * np.exp(x)
+
+    def plot(self, x_start=-2, x_end=2, num_points=100):
+        x = np.linspace(x_start, x_end, num_points)
+        y = self(x) 
+        y_derivative = self.derivative(x)  # Значения производной
+
+        plt.figure(figsize=(8, 6))
+        plt.plot(x, y, label=f"f(x) = {self.a} * exp(x)")
+        plt.plot(x, y_derivative, label=f"f'(x) = {self.a} * exp(x)") 
+        plt.xlabel("x")
+        plt.ylabel("y")
+        plt.title("График функции и ее производной")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
+# Пример использования:
+exp_func = ExponentialFunction(a=2)
+print(exp_func(0))
+print(exp_func.derivative(0))
+
+# Построение графиков
+exp_func.plot()
