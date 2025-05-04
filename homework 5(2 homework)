@@ -9,6 +9,7 @@ class Fraction:
         return super().__new__(cls)
 
     def __init__(self, numerator, denominator):
+        """Инициализация объекта дроби."""
         if not isinstance(numerator, int):
             raise TypeError("Числитель должен быть целым числом.")
         if not isinstance(denominator, int):
@@ -18,6 +19,7 @@ class Fraction:
         self._value = None  # Кэшируем значение, чтобы вычислять только один раз
 
     def __str__(self):
+        """Красивый вывод дроби (a/b)."""
         return f"{self.numerator}/{self.denominator}"
 
     def __repr__(self):
@@ -25,11 +27,13 @@ class Fraction:
 
     @property
     def value(self):
+        """Вычисление точного значения дроби с округлением до 3-го знака."""
         if self._value is None:
             self._value = round(self.numerator / self.denominator, 3)
         return self._value
 
     def __add__(self, other):
+        """Сложение двух дробей."""
         if isinstance(other, Fraction):
             new_numerator = self.numerator * other.denominator + other.numerator * self.denominator
             new_denominator = self.denominator * other.denominator
@@ -38,6 +42,7 @@ class Fraction:
             raise TypeError("Складывать можно только с объектом Fraction")
 
     def __sub__(self, other):
+        """Вычитание двух дробей."""
         if isinstance(other, Fraction):
             new_numerator = self.numerator * other.denominator - other.numerator * self.denominator
             new_denominator = self.denominator * other.denominator
@@ -46,6 +51,7 @@ class Fraction:
             raise TypeError("Вычитать можно только объект Fraction")
 
     def __mul__(self, other):
+        """Умножение двух дробей."""
         if isinstance(other, Fraction):
             new_numerator = self.numerator * other.numerator
             new_denominator = self.denominator * other.denominator
@@ -54,6 +60,7 @@ class Fraction:
             raise TypeError("Умножать можно только на объект Fraction")
 
     def __truediv__(self, other):
+        """Деление двух дробей."""
         if isinstance(other, Fraction):
             new_numerator = self.numerator * other.denominator
             new_denominator = self.denominator * other.numerator
@@ -103,6 +110,7 @@ from fractions import Fraction
 
 class FractionMatrix:
     def __init__(self, matrix):
+        """Инициализация матрицы из дробей."""
         if not all(isinstance(row, list) for row in matrix):
             raise TypeError("Матрица должна быть списком списков.")
         if not all(all(isinstance(elem, Fraction) for elem in row) for row in matrix):
@@ -115,9 +123,11 @@ class FractionMatrix:
               raise ValueError("Все строки должны иметь одинаковую длину.")
 
     def __str__(self):
+        """Красивый вывод матрицы."""
         return "\n".join([" ".join(str(elem) for elem in row) for row in self.matrix])
 
     def __add__(self, other):
+        """Сложение матриц."""
         if not isinstance(other, FractionMatrix):
             raise TypeError("Можно складывать только с объектом FractionMatrix.")
         if self.rows != other.rows or self.cols != other.cols:
@@ -132,6 +142,7 @@ class FractionMatrix:
         return FractionMatrix(result)
 
     def __sub__(self, other):
+        """Вычитание матриц."""
         if not isinstance(other, FractionMatrix):
             raise TypeError("Можно вычитать только объект FractionMatrix.")
         if self.rows != other.rows or self.cols != other.cols:
@@ -146,6 +157,7 @@ class FractionMatrix:
         return FractionMatrix(result)
 
     def __mul__(self, other):
+        """Умножение матриц."""
         if isinstance(other, FractionMatrix):
             if self.cols != other.rows:
                 raise ValueError("Количество столбцов первой матрицы должно быть равно количеству строк второй матрицы для умножения.")
@@ -221,7 +233,7 @@ except ValueError as e:
 try:
     m4 = FractionMatrix([[1, 2], [3, 4]])
 except TypeError as e:
-    print(e)
+    print(e) #Элементы матрицы должны быть объектами Fraction.
 
 try:
     m5 = FractionMatrix([[Fraction(1, 2), Fraction(1, 3)], [Fraction(2, 5), Fraction(3, 4)]])
