@@ -24,13 +24,11 @@ class Fraction:
 
     @property
     def value(self):
-        """Вычисление точного значения дроби с округлением до 3-го знака."""
         if self._value is None:
             self._value = round(self.numerator / self.denominator, 3)
         return self._value
 
     def __add__(self, other):
-        """Сложение двух дробей."""
         if isinstance(other, Fraction):
             new_numerator = self.numerator * other.denominator + other.numerator * self.denominator
             new_denominator = self.denominator * other.denominator
@@ -39,7 +37,6 @@ class Fraction:
             raise TypeError("Складывать можно только с объектом Fraction")
 
     def __sub__(self, other):
-        """Вычитание двух дробей."""
         if isinstance(other, Fraction):
             new_numerator = self.numerator * other.denominator - other.numerator * self.denominator
             new_denominator = self.denominator * other.denominator
@@ -48,7 +45,6 @@ class Fraction:
             raise TypeError("Вычитать можно только объект Fraction")
 
     def __mul__(self, other):
-        """Умножение двух дробей."""
         if isinstance(other, Fraction):
             new_numerator = self.numerator * other.numerator
             new_denominator = self.denominator * other.denominator
@@ -57,7 +53,6 @@ class Fraction:
             raise TypeError("Умножать можно только на объект Fraction")
 
     def __truediv__(self, other):
-        """Деление двух дробей."""
         if isinstance(other, Fraction):
             new_numerator = self.numerator * other.denominator
             new_denominator = self.denominator * other.numerator
@@ -76,7 +71,6 @@ class Fraction:
 
     @classmethod
     def simplify(cls, fraction):
-        """Упрощение дроби."""
         common_divisor = Fraction.gcd(fraction.numerator, fraction.denominator)
         return Fraction(fraction.numerator // common_divisor, fraction.denominator // common_divisor)
 
