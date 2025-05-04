@@ -1,0 +1,82 @@
+#1
+class Animal:
+    """Базовый класс для животных."""
+
+    def speak(self):
+        """Издает звук."""
+        return "издает звук"
+
+class MixinSwim:
+    """Миксин для плавающих животных."""
+
+    def swim(self):
+        """Плавает."""
+        return "плавает"
+
+class MixinFly:
+    """Миксин для летающих животных."""
+
+    def fly(self):
+        """Летает."""
+        return "летает"
+
+class Duck(Animal, MixinSwim, MixinFly):
+    """Класс для уток, которые умеют плавать и летать."""
+
+    def speak(self):
+        """Крякает."""
+        return "кря-кря"
+
+class Penguin(Animal, MixinSwim):
+    """Класс для пингвинов, которые умеют плавать, но не умеют летать."""
+
+    def speak(self):
+        """Издает звук пингвина."""
+        return "буль-буль"
+
+# Создание списка объектов:
+animals = [Duck(), Penguin()]
+
+# Цикл по списку и вызов методов:
+for animal in animals:
+    print(f"Животное говорит: {animal.speak()}")
+    print(f"Животное {animal.swim()}")
+    if isinstance(animal, MixinFly): #Проверяем умеет ли летать
+        print(f"Животное {animal.fly()}")
+    print("-" * 20)
+#2
+class Writer:
+    """Класс для писателей."""
+
+    def write(self):
+        """Пишет текст."""
+        return "пишет текст"
+
+class Painter:
+    """Класс для художников."""
+
+    def draw(self):
+        """Рисует картину."""
+        return "рисует картину"
+
+class CreativePerson(Writer, Painter):
+    """Класс для творческих личностей, объединяющих навыки писателя и художника."""
+
+    def write(self):
+        """Творчески пишет стихотворение."""
+        return "творчески пишет стихотворение"
+
+    def draw(self):
+        """Выразительно рисует пейзаж."""
+        return "выразительно рисует пейзаж"
+
+# Создание списка объектов:
+people = [Writer(), Painter(), CreativePerson()]
+
+# Цикл по списку и вызов методов:
+for person in people:
+    if hasattr(person, 'write'): #Проверяем наличие метода write
+        print(f"Человек {person.write()}")
+    if hasattr(person, 'draw'): #Проверяем наличие метода draw
+        print(f"Человек {person.draw()}")
+    print("-" * 20)
