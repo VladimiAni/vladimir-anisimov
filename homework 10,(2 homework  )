@@ -1,0 +1,67 @@
+#1
+class Animal:
+
+    def speak(self):
+        return "издает звук"
+
+class MixinSwim:
+
+    def swim(self):
+        return "плавает"
+
+class MixinFly:
+
+    def fly(self):
+        return "летает"
+
+class Duck(Animal, MixinSwim, MixinFly):
+    """Класс для уток, которые умеют плавать и летать."""
+
+    def speak(self):
+        return "кря-кря"
+
+class Penguin(Animal, MixinSwim):
+    """Класс для пингвинов, которые умеют плавать, но не умеют летать."""
+
+    def speak(self):
+        return "буль-буль"
+
+# Создание списка объектов:
+animals = [Duck(), Penguin()]
+
+
+for animal in animals:
+    print(f"Животное говорит: {animal.speak()}")
+    print(f"Животное {animal.swim()}")
+    if isinstance(animal, MixinFly): #Проверяем умеет ли летать
+        print(f"Животное {animal.fly()}")
+    print("-" * 20)
+#2
+class Writer:
+
+    def write(self):
+        return "пишет текст"
+
+class Painter:
+
+    def draw(self):
+        return "рисует картину"
+
+class CreativePerson(Writer, Painter):
+    """Класс для творческих личностей, объединяющих навыки писателя и художника."""
+
+    def write(self):
+        return "творчески пишет стихотворение"
+
+    def draw(self):
+        return "выразительно рисует пейзаж"
+
+# Создание списка объектов:
+people = [Writer(), Painter(), CreativePerson()]
+
+for person in people:
+    if hasattr(person, 'write'): #Проверяем наличие метода write
+        print(f"Человек {person.write()}")
+    if hasattr(person, 'draw'): #Проверяем наличие метода draw
+        print(f"Человек {person.draw()}")
+    print("-" * 20)
