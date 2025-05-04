@@ -1,0 +1,86 @@
+#1
+def find_elements_by_index(values, indices):
+    result = []
+    try:
+        for index in indices:
+            result.append(values[index])
+        return result
+    except IndexError as e:
+        return f"Ошибка индекса: {e}"
+
+# Пример использования:
+values = [10, 20, 30, 40, 50]
+indices1 = [0, 2, 4]
+indices2 = [1, 5, 3]
+
+result1 = find_elements_by_index(values, indices1)
+result2 = find_elements_by_index(values, indices2)
+
+print("Результат 1:", result1)
+print("Результат 2:", result2)
+
+#2
+import math
+
+class Circle:
+
+    def __init__(self, radius):
+        self.radius = radius
+
+    @property
+    def diameter(self):
+        """Вычисление диаметра на основе радиуса (свойство)."""
+        return self.radius * 2
+
+    def area(self):
+        return math.pi * self.radius**2
+
+# Пример использования:
+circle = Circle(5)
+
+print("Радиус:", circle.radius)
+print("Диаметр:", circle.diameter)  # Доступ к диаметру как к свойству
+print("Площадь:", circle.area())
+
+circle2 = Circle(7)
+print("\nРадиус:", circle2.radius)
+print("Диаметр:", circle2.diameter)
+print("Площадь:", circle2.area())
+
+#3
+class Employee:
+
+    def __init__(self):
+        self._employees = []  # Используем _employees для защиты от прямого доступа
+
+    def add_employee(self, name, salary):
+        """Добавление нового сотрудника в список."""
+        self._employees.append({"name": name, "salary": salary})
+
+    @property
+    def average_salary(self):
+        """Вычисление средней зарплаты сотрудников (свойство)."""
+        if not self._employees:
+            return 0 
+        total_salary = sum(emp["salary"] for emp in self._employees)
+        return total_salary / len(self._employees)
+
+    def get_sorted_employees(self):
+        """Возвращает список сотрудников, отсортированный по зарплате."""
+        return sorted(self._employees, key=lambda emp: emp["salary"])
+
+# Пример использования:
+employee_list = Employee()
+employee_list.add_employee("Alice", 50000)
+employee_list.add_employee("Bob", 60000)
+employee_list.add_employee("Charlie", 45000)
+
+print("Средняя зарплата:", employee_list.average_salary)
+
+sorted_employees = employee_list.get_sorted_employees()
+print("\nСотрудники, отсортированные по зарплате:")
+for employee in sorted_employees:
+    print(f"- {employee['name']}: {employee['salary']}")
+
+employee_list2 = Employee() #Проверяем если нет работников
+print("\nСредняя зарплата:", employee_list2.average_salary)
