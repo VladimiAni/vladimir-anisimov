@@ -1,2 +1,0 @@
-# vladimir-anisimov
-polutech
