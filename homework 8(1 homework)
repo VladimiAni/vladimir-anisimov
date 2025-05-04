@@ -1,0 +1,176 @@
+import math
+
+class Fraction:
+    _instances = {}  # Словарь для хранения экземпляров дробей
+
+    def __new__(cls, numerator, denominator):
+        """Проверка деления на 0 и проверка хэшей."""
+        if denominator == 0:
+            raise ZeroDivisionError("Знаменатель не может быть равен нулю.")
+
+        # Упрощаем дробь перед проверкой на существование
+        common_divisor = Fraction.gcd(numerator, denominator)
+        numerator //= common_divisor
+        denominator //= common_divisor
+
+        hash_value = hash((numerator, denominator))
+
+        if hash_value in cls._instances:
+            return cls._instances[hash_value]
+        else:
+            instance = super().__new__(cls)
+            cls._instances[hash_value] = instance
+            return instance
+
+
+    def __init__(self, numerator, denominator):
+        """Инициализация объекта дроби."""
+        if not hasattr(self, 'numerator'): #Чтобы не инициализировать повторно
+            if not isinstance(numerator, int):
+                raise TypeError("Числитель должен быть целым числом.")
+            if not isinstance(denominator, int):
+                raise TypeError("Знаменатель должен быть целым числом.")
+            self.numerator = numerator
+            self.denominator = denominator
+            self.simplify()#Упрощаем в __init__ , тк после операций дробь может быть не упрощенной
+            self._value = None  # Кэшируем значение, чтобы вычислять только один раз
+            self._hash = hash((self.numerator, self.denominator))
+
+
+    def __str__(self):
+        """Красивый вывод дроби (a/b)."""
+        return f"{self.numerator}/{self.denominator}"
+
+    def __repr__(self):
+         return f"Fraction({self.numerator}, {self.denominator})"
+
+    @property
+    def value(self):
+        """Вычисление точного значения дроби с округлением до 3-го знака."""
+        if self._value is None:
+            self._value = round(self.numerator / self.denominator, 3)
+        return self._value
+
+    def __add__(self, other):
+        """Сложение двух дробей."""
+        if isinstance(other, Fraction):
+            new_numerator = self.numerator * other.denominator + other.numerator * self.denominator
+            new_denominator = self.denominator * other.denominator
+            return Fraction(new_numerator, new_denominator)
+        else:
+            raise TypeError("Складывать можно только с объектом Fraction")
+
+    def __sub__(self, other):
+        """Вычитание двух дробей."""
+        if isinstance(other, Fraction):
+            new_numerator = self.numerator * other.denominator - other.numerator * self.denominator
+            new_denominator = self.denominator * other.denominator
+            return Fraction(new_numerator, new_denominator)
+        else:
+            raise TypeError("Вычитать можно только объект Fraction")
+
+    def __mul__(self, other):
+        """Умножение двух дробей."""
+        if isinstance(other, Fraction):
+            new_numerator = self.numerator * other.numerator
+            new_denominator = self.denominator * other.denominator
+            return Fraction(new_numerator, new_denominator)
+        else:
+            raise TypeError("Умножать можно только на объект Fraction")
+
+    def __truediv__(self, other):
+        """Деление двух дробей."""
+        if isinstance(other, Fraction):
+            new_numerator = self.numerator * other.denominator
+            new_denominator = self.denominator * other.numerator
+            if new_denominator == 0:
+                raise ZeroDivisionError("Деление на ноль!")
+            return Fraction(new_numerator, new_denominator)
+        else:
+            raise TypeError("Делить можно только на объект Fraction")
+
+    def __eq__(self, other):
+        """Проверка на равенство двух дробей."""
+        if isinstance(other, Fraction):
+            return self.numerator == other.numerator and self.denominator == other.denominator
+        return False
+
+    def __ne__(self, other):
+        """Проверка на неравенство двух дробей."""
+        return not self.__eq__(other)
+
+    def __lt__(self, other):
+        """Проверка на меньше."""
+        if isinstance(other, Fraction):
+            return self.numerator * other.denominator < other.numerator * self.denominator
+        raise TypeError("Сравнить можно только с объектом Fraction")
+
+    def __gt__(self, other):
+        """Проверка на больше."""
+        if isinstance(other, Fraction):
+            return self.numerator * other.denominator > other.numerator * self.denominator
+        raise TypeError("Сравнить можно только с объектом Fraction")
+
+    def __le__(self, other):
+        """Проверка на меньше или равно."""
+        return self.__lt__(other) or self.__eq__(other)
+
+    def __ge__(self, other):
+        """Проверка на больше или равно."""
+        return self.__gt__(other) or self.__eq__(other)
+
+    def __hash__(self):
+      return self._hash
+
+    @staticmethod
+    def gcd(a, b):
+        """Наибольший общий делитель (НОД)."""
+        a = abs(a) #Для работы с отрицательными
+        b= abs(b)
+        while(b):
+            a, b = b, a % b
+        return a
+
+    def simplify(self):
+        """Упрощение дроби."""
+        common_divisor = Fraction.gcd(self.numerator, self.denominator)
+        self.numerator //= common_divisor
+        self.denominator //= common_divisor
+
+    @classmethod
+    def from_float(cls, value):
+        """Создает дробь из float (необязательно, но полезно)."""
+        if not isinstance(value, float):
+            raise TypeError("Аргумент должен быть float")
+        integer_part = int(value)
+        fractional_part = value - integer_part
+        fraction_str = str(fractional_part).split('.')[1] #Получаем дробную часть как строку
+        denominator = 10**len(fraction_str)
+        numerator = int(fraction_str)
+
+        return cls(integer_part * denominator + numerator, denominator) #вызываем класс
+
+# Пример работы:
+f1 = Fraction(1, 2)
+f2 = Fraction(3, 4)
+f3 = Fraction(2, 4)  # Будет тем же объектом, что и f1
+
+print(f1 + f2)
+print(f1 - f2)
+print(f1 * f2)
+print(f1 / f2)
+print(f1.value)
+
+print(f1 == f3)  # True (значения равны, и это один и тот же объект)
+print(f1 is f3)  # True (это один и тот же объект)
+
+print(f1 < f2)   # True
+print(f1 > f2)   # False
+print(f1 <= f3)  # True
+print(f1 >= f3)  # True
+print(f1 != f2)  # True
+
+print(Fraction.from_float(0.75)) # 3/4
+f4= Fraction(2, 4)
+print(f4==f1) #True
+print(f4 is f1) #True
