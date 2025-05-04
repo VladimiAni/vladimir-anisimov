@@ -1,0 +1,96 @@
+#1
+import math
+
+class Shape:
+    """Базовый класс для геометрических фигур."""
+
+    def area(self):
+        """Вычисление площади (должен быть переопределен в подклассах)."""
+        raise NotImplementedError("Метод area() должен быть переопределен в подклассе")
+
+    def perimeter(self):
+        """Вычисление периметра (должен быть переопределен в подклассах)."""
+        raise NotImplementedError("Метод perimeter() должен быть переопределен в подклассе")
+
+class Circle(Shape):
+    """Класс для представления круга."""
+
+    def __init__(self, radius):
+        """Инициализация круга с заданным радиусом."""
+        self.radius = radius
+
+    def area(self):
+        """Вычисление площади круга."""
+        return math.pi * self.radius**2
+
+    def perimeter(self):
+        """Вычисление периметра (длины окружности) круга."""
+        return 2 * math.pi * self.radius
+
+class Rectangle(Shape):
+    """Класс для представления прямоугольника."""
+
+    def __init__(self, width, height):
+        """Инициализация прямоугольника с заданной шириной и высотой."""
+        self.width = width
+        self.height = height
+
+    def area(self):
+        """Вычисление площади прямоугольника."""
+        return self.width * self.height
+
+    def perimeter(self):
+        """Вычисление периметра прямоугольника."""
+        return 2 * (self.width + self.height)
+
+# Создание экземпляров и вывод результатов:
+circle = Circle(5)
+print("Circle area:", circle.area())
+print("Circle perimeter:", circle.perimeter())
+
+rectangle = Rectangle(4, 6)
+print("Rectangle area:", rectangle.area())
+print("Rectangle perimeter:", rectangle.perimeter())
+
+circle2 = Circle(2.5)
+print("\nCircle 2 area:", circle2.area())
+print("Circle 2 perimeter:", circle2.perimeter())
+
+rectangle2 = Rectangle(7, 3)
+print("Rectangle 2 area:", rectangle2.area())
+print("Rectangle 2 perimeter:", rectangle2.perimeter())
+
+#2
+class Animal:
+    """Базовый класс для животных."""
+
+    def sound(self):
+        """Издаваемый звук (должен быть переопределен в подклассах)."""
+        return "Generic animal sound"  # Поведение по умолчанию
+        # raise NotImplementedError("Метод sound() должен быть переопределен в подклассе")
+
+class Dog(Animal):
+    """Класс для представления собаки."""
+
+    def sound(self):
+        """Издаваемый звук собаки."""
+        return "Гав-гав"
+
+class Cat(Animal):
+    """Класс для представления кошки."""
+
+    def sound(self):
+        """Издаваемый звук кошки."""
+        return "Мяу"
+
+class Cow(Animal):
+    """Класс для представления коровы."""
+
+    def sound(self):
+        """Издаваемый звук коровы."""
+        return "Муу"
+
+# Создание списка животных и вывод звуков:
+animals = [Dog(), Cat(), Cow()]
+for animal in animals:
+    print(animal.sound())
